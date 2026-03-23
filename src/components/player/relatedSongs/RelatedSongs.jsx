@@ -144,6 +144,9 @@ import RelatedSongsSkeleton from "./RelatedSongsSkeleton";
 import { useGetRelatedSongsQuery } from "../../../reduxtool/services/myApi";
 
 const RelatedSongs = ({ songsList, setSongsList }) => {
+  console.log("RelatedSongs component mounted"); // 👈 HERE
+
+const RelatedSongs = ({ songsList, setSongsList }) => {
   const dispatch = useDispatch();
 
   const currentSong = useSelector(
