@@ -163,7 +163,7 @@ const RelatedSongs = ({ songsList, setSongsList }) => {
     isError,
     error,
     refetch,
-  } = useGetRelatedSongsQuery(id, { skip: !id });
+  } = useGetRelatedSongsQuery();
 
   // ✅ FIX 3: update list safely
   useEffect(() => {
