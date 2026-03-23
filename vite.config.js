@@ -11,10 +11,21 @@ export default defineConfig({
     }),
     svgr(),
     VitePWA({
-      registerType: "autoUpdate", 
+      registerType: "autoUpdate",
       workbox: {
-        offlineGoogleAnalytics: true,
+        skipWaiting: true,
+        clientsClaim: true,
+
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) =>
+              url.origin.includes("youtube.com") ||
+              url.origin.includes("googleapis.com"),
+            handler: "NetworkOnly", // 🚨 VERY IMPORTANT
+          },
+        ],
       },
+
       manifest: {
         name: "SB Music App",
         short_name: "SB Music",
@@ -49,4 +60,3 @@ export default defineConfig({
     sourcemap: false,
   },
 });
-
