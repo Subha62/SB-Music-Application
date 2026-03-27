@@ -9,19 +9,23 @@ export default defineConfig({
       tsDecorators: true,
       sourcemap: false,
     }),
+
     svgr(),
+
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: "prompt", // ✅ manual update (NO auto reload)
+
       workbox: {
-        skipWaiting: true,
-        clientsClaim: true,
+        // ❌ REMOVED (was causing shaking)
+        // skipWaiting: true,
+        // clientsClaim: true,
 
         runtimeCaching: [
           {
             urlPattern: ({ url }) =>
               url.origin.includes("youtube.com") ||
               url.origin.includes("googleapis.com"),
-            handler: "NetworkOnly", // 🚨 VERY IMPORTANT
+            handler: "NetworkOnly", // ✅ prevents caching dynamic API
           },
         ],
       },
@@ -33,6 +37,7 @@ export default defineConfig({
         display: "standalone",
         background_color: "#000000",
         theme_color: "#000000",
+
         icons: [
           {
             src: "/image (1).png",
@@ -55,6 +60,7 @@ export default defineConfig({
       ],
     }),
   ],
+
   build: {
     outDir: "build",
     sourcemap: false,
