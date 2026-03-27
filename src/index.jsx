@@ -7,13 +7,12 @@ import { store } from "./reduxtool/store";
 
 import { registerSW } from "virtual:pwa-register";
 
-console.log("YT API:", import.meta.env.VITE_YT_API);
+console.log("YT API:", import.meta.env.VITE_YT_API");
 
-const updateSW = registerSW({
+// ✅ SAFE SERVICE WORKER (NO AUTO RELOAD)
+registerSW({
   onNeedRefresh() {
-    if (confirm("New content available. Reload?")) {
-      updateSW(true);
-    }
+    console.log("New version available");
   },
   onOfflineReady() {
     console.log("offline ready");
