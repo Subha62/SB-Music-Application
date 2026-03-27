@@ -25,24 +25,29 @@
 // export default Home;
 
 
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import "./Home.css";
 import SongsList from "../../components/songsList/SongsList";
 import { homepagePlaylistInfo } from "../../utils/homepagePlaylists";
-import { useSelector } from "react-redux";
+import { useSelector, shallowEqual } from "react-redux";
 
 const Home = () => {
-  const currentSong = useSelector((state) => state.currentSongSlice.currentSongInfo);
+  const currentSongId = useSelector(
+    (state) => state.currentSongSlice.currentSongInfo?.id,
+    shallowEqual
+  );
 
   useEffect(() => {
     document.title = "Enjoy Your Top Trending Songs • SB Music";
   }, []);
 
-  const hasActiveSong = !!currentSong?.id;
+  const hasActiveSong = !!currentSongId;
+
+  const playlists = useMemo(() => homepagePlaylistInfo, []);
 
   return (
     <div className={`home-section ${hasActiveSong ? "with-song-bg" : ""}`}>
-      {homepagePlaylistInfo.map((playlist) => (
+      {playlists.map((playlist) => (
         <SongsList
           key={playlist.id}
           playlistId={playlist.id}
