@@ -7,9 +7,9 @@ import { store } from "./reduxtool/store";
 
 import { registerSW } from "virtual:pwa-register";
 
-console.log("YT API:", import.meta.env.VITE_YT_API");
+console.log("YT API:", import.meta.env.VITE_YT_API);
 
-// ✅ SAFE SERVICE WORKER (NO AUTO RELOAD)
+// ✅ SAFE SERVICE WORKER
 registerSW({
   onNeedRefresh() {
     console.log("New version available");
