@@ -135,7 +135,161 @@
 
 
 
-import React, { useEffect, useRef, useState } from "react";
+// import React, { useEffect, useRef, useState } from "react";
+// import { BsPlayCircleFill } from "react-icons/bs";
+// import { useDispatch, useSelector } from "react-redux";
+// import { addSongInfo } from "../../../reduxtool/slice/currentSongSlice";
+// import "./RelatedSongs.css";
+// import RelatedSongsSkeleton from "./RelatedSongsSkeleton";
+// import { useGetRelatedSongsQuery } from "../../../reduxtool/services/myApi";
+
+// const RelatedSongs = ({ songsList, setSongsList }) => {
+//   console.log("RelatedSongs component mounted");
+
+//   const dispatch = useDispatch();
+
+//   const currentSong = useSelector(
+//     (state) => state.currentSongSlice.currentSongInfo
+//   );
+
+//   const id = currentSong?.id;
+
+  
+
+//   const [isUpClick, setIsUpClick] = useState(false);
+//   const upNextRef = useRef();
+
+//   // ✅ FIX 2: safe API call
+//   const {
+//     data,
+//     isLoading,
+//     isError,
+//     error,
+//     refetch,
+//   } = useGetRelatedSongsQuery();
+
+//   // ✅ FIX 3: update list safely
+//   useEffect(() => {
+//     if (Array.isArray(data?.result) && data.result.length > 0) {
+//       setSongsList(data.result);
+//     } else {
+//       setSongsList([]);
+//     }
+//   }, [data, setSongsList]);
+
+//   // ✅ FIX 4: outside click handler
+//   useEffect(() => {
+//     const handleClickOutside = (e) => {
+//       if (upNextRef.current && !upNextRef.current.contains(e.target)) {
+//         setIsUpClick(false);
+//       }
+//     };
+
+//     window.addEventListener("click", handleClickOutside);
+//     return () => window.removeEventListener("click", handleClickOutside);
+//   }, []);
+
+//   // ✅ FIX 5: play next (clean dispatch)
+//   const handleRedirect = (videoId) => {
+//     if (!videoId) return;
+
+//     dispatch(
+//       addSongInfo({
+//         id: videoId,
+//         miniPlayerActive: false,
+//       })
+//     );
+//   };
+
+//   return (
+//     <div className="related-songs-section">
+//       <h3 className="relate-songs-heading">Up Next Songs</h3>
+
+//       <div
+//         className="relate-songs-heading mobile-next cur-pointer"
+//         ref={upNextRef}
+//         onClick={() => setIsUpClick(!isUpClick)}
+//       >
+//         Up Next Songs
+//       </div>
+
+//       <div
+//         className={`related-songs-container ${
+//           isUpClick ? "related-songs-mobile" : ""
+//         }`}
+//       >
+//         {isLoading ? (
+//           <RelatedSongsSkeleton amount={6} />
+//         ) : songsList?.length ? (
+//           songsList.map((song) => (
+//             <div
+//               className="related-songs-info-wrapper cur-pointer"
+//               key={song?.videoId}
+//               onClick={() => handleRedirect(song?.videoId)}
+//             >
+//               <div className="related-songs-image-wrapper">
+//                 <img
+//                   src={song?.thumbnails || ""}
+//                   className="related-songs-image"
+//                   alt={song?.title || "Song Poster"}
+//                 />
+
+//                 {/* ✅ FIX 6: active playing highlight */}
+//                 {id === song?.videoId && (
+//                   <div className="playing-status-wrapper">
+//                     <BsPlayCircleFill
+//                       style={{ width: "100%", height: "100%" }}
+//                     />
+//                   </div>
+//                 )}
+
+//                 <small className="song-time-length">
+//                   {song?.length || "?"}
+//                 </small>
+//               </div>
+
+//               <div className="related-songs-title-channel-wrapper">
+//                 <p className="related-songs-title-wrapper">
+//                   {song?.title || "Unknown Title"}
+//                 </p>
+//                 <p className="related-songs-channel-wrapper">
+//                   • {song?.artistInfo?.artist?.[0]?.text || "Unknown Artist"}
+//                 </p>
+//               </div>
+//             </div>
+//           ))
+//         ) : (
+//           <div className="related-songs-error-wrapper">
+//             <p className="sorry-emoji">😢</p>
+//             <p>Sorry! Not able to fetch related songs</p>
+
+//             {/* ✅ Better error display */}
+//             {isError && (
+//               <p className="error-message">
+//                 {error?.data?.error?.message ||
+//                   error?.error ||
+//                   "API Error"}
+//               </p>
+//             )}
+
+//             <button
+//               type="button"
+//               className="cur-pointer refetch-button"
+//               onClick={refetch}
+//             >
+//               Refetch
+//             </button>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+
+// export default RelatedSongs;
+
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import { BsPlayCircleFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { addSongInfo } from "../../../reduxtool/slice/currentSongSlice";
@@ -143,9 +297,7 @@ import "./RelatedSongs.css";
 import RelatedSongsSkeleton from "./RelatedSongsSkeleton";
 import { useGetRelatedSongsQuery } from "../../../reduxtool/services/myApi";
 
-const RelatedSongs = ({ songsList, setSongsList }) => {
-  console.log("RelatedSongs component mounted");
-
+const RelatedSongs = () => {
   const dispatch = useDispatch();
 
   const currentSong = useSelector(
@@ -154,30 +306,37 @@ const RelatedSongs = ({ songsList, setSongsList }) => {
 
   const id = currentSong?.id;
 
-  
-
   const [isUpClick, setIsUpClick] = useState(false);
   const upNextRef = useRef();
 
-  // ✅ FIX 2: safe API call
+  // ✅ Stable random keyword (runs ONLY once)
+  const randomQuery = useMemo(() => {
+    const keywords = [
+      "trending songs india",
+      "bollywood hits",
+      "lofi music",
+      "party songs",
+      "romantic songs",
+      "sad songs",
+      "hip hop music",
+      "english pop songs",
+    ];
+
+    return keywords[Math.floor(Math.random() * keywords.length)];
+  }, []);
+
+  // ✅ API call (stable)
   const {
     data,
     isLoading,
     isError,
     error,
     refetch,
-  } = useGetRelatedSongsQuery();
+  } = useGetRelatedSongsQuery(randomQuery);
 
-  // ✅ FIX 3: update list safely
-  useEffect(() => {
-    if (Array.isArray(data?.result) && data.result.length > 0) {
-      setSongsList(data.result);
-    } else {
-      setSongsList([]);
-    }
-  }, [data, setSongsList]);
+  const songs = data?.result || [];
 
-  // ✅ FIX 4: outside click handler
+  // ✅ Outside click handler
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (upNextRef.current && !upNextRef.current.contains(e.target)) {
@@ -189,7 +348,7 @@ const RelatedSongs = ({ songsList, setSongsList }) => {
     return () => window.removeEventListener("click", handleClickOutside);
   }, []);
 
-  // ✅ FIX 5: play next (clean dispatch)
+  // ✅ Play next
   const handleRedirect = (videoId) => {
     if (!videoId) return;
 
@@ -220,8 +379,8 @@ const RelatedSongs = ({ songsList, setSongsList }) => {
       >
         {isLoading ? (
           <RelatedSongsSkeleton amount={6} />
-        ) : songsList?.length ? (
-          songsList.map((song) => (
+        ) : songs.length ? (
+          songs.map((song) => (
             <div
               className="related-songs-info-wrapper cur-pointer"
               key={song?.videoId}
@@ -229,12 +388,11 @@ const RelatedSongs = ({ songsList, setSongsList }) => {
             >
               <div className="related-songs-image-wrapper">
                 <img
-                  src={song?.thumbnails || ""}
+                  src={song?.thumbnails}
                   className="related-songs-image"
-                  alt={song?.title || "Song Poster"}
+                  alt={song?.title}
                 />
 
-                {/* ✅ FIX 6: active playing highlight */}
                 {id === song?.videoId && (
                   <div className="playing-status-wrapper">
                     <BsPlayCircleFill
@@ -244,16 +402,16 @@ const RelatedSongs = ({ songsList, setSongsList }) => {
                 )}
 
                 <small className="song-time-length">
-                  {song?.length || "?"}
+                  {song?.length}
                 </small>
               </div>
 
               <div className="related-songs-title-channel-wrapper">
                 <p className="related-songs-title-wrapper">
-                  {song?.title || "Unknown Title"}
+                  {song?.title}
                 </p>
                 <p className="related-songs-channel-wrapper">
-                  • {song?.artistInfo?.artist?.[0]?.text || "Unknown Artist"}
+                  • {song?.artistInfo?.artist?.[0]?.text}
                 </p>
               </div>
             </div>
@@ -263,7 +421,6 @@ const RelatedSongs = ({ songsList, setSongsList }) => {
             <p className="sorry-emoji">😢</p>
             <p>Sorry! Not able to fetch related songs</p>
 
-            {/* ✅ Better error display */}
             {isError && (
               <p className="error-message">
                 {error?.data?.error?.message ||
