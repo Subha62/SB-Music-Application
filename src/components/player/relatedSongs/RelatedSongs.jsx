@@ -144,17 +144,17 @@ import RelatedSongsSkeleton from "./RelatedSongsSkeleton";
 import { useGetRelatedSongsQuery } from "../../../reduxtool/services/myApi";
 
 const RelatedSongs = ({ songsList, setSongsList }) => {
-  console.log("RelatedSongs component mounted"); // 👈 HERE
+  console.log("RelatedSongs component mounted");
 
-const RelatedSongs = ({ songsList, setSongsList }) => {
   const dispatch = useDispatch();
 
   const currentSong = useSelector(
     (state) => state.currentSongSlice.currentSongInfo
   );
 
-  // ✅ FIX 1: safe id extraction
   const id = currentSong?.id;
+
+  
 
   const [isUpClick, setIsUpClick] = useState(false);
   const upNextRef = useRef();
