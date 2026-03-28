@@ -9,7 +9,7 @@ import { registerSW } from "virtual:pwa-register";
 
 console.log("YT API:", import.meta.env.VITE_YT_API);
 
-// ✅ SAFE SERVICE WORKER
+// SAFE SERVICE WORKER
 registerSW({
   onNeedRefresh() {
     console.log("New version available");
