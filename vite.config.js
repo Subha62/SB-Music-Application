@@ -13,19 +13,15 @@ export default defineConfig({
     svgr(),
 
     VitePWA({
-      registerType: "prompt", // ✅ manual update (NO auto reload)
+      registerType: "prompt",
 
       workbox: {
-        // ❌ REMOVED (was causing shaking)
-        // skipWaiting: true,
-        // clientsClaim: true,
-
         runtimeCaching: [
           {
             urlPattern: ({ url }) =>
               url.origin.includes("youtube.com") ||
               url.origin.includes("googleapis.com"),
-            handler: "NetworkOnly", // ✅ prevents caching dynamic API
+            handler: "NetworkOnly",
           },
         ],
       },
@@ -40,24 +36,19 @@ export default defineConfig({
 
         icons: [
           {
-            src: "/image (1).png",
+            src: "/icon.png",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "/image (1).png",
+            src: "/icon.png",
             sizes: "512x512",
             type: "image/png",
           },
         ],
       },
 
-      includeAssets: [
-        "favicon.ico",
-        "robots.txt",
-        "apple-touch-icon.png",
-        "icons/*.png",
-      ],
+      includeAssets: ["favicon.ico", "robots.txt"],
     }),
   ],
 
