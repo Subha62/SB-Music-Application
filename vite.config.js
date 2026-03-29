@@ -16,12 +16,29 @@ export default defineConfig({
       registerType: "prompt",
 
       workbox: {
+        cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true,
+
         runtimeCaching: [
           {
-            urlPattern: ({ url }) =>
-              url.origin.includes("youtube.com") ||
-              url.origin.includes("googleapis.com"),
+            urlPattern: /^https:\/\/www\.googleapis\.com\/youtube\/v3\/.*/i,
             handler: "NetworkOnly",
+          },
+          {
+            urlPattern: /^https:\/\/youtube\.googleapis\.com\/youtube\/v3\/.*/i,
+            handler: "NetworkOnly",
+          },
+          {
+            urlPattern: /^https:\/\/i\.ytimg\.com\/.*/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "youtube-thumbnails",
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 7,
+              },
+            },
           },
         ],
       },
@@ -48,7 +65,7 @@ export default defineConfig({
         ],
       },
 
-      includeAssets: ["favicon.ico", "robots.txt"],
+      includeAssets: ["favicon.ico", "robots.txt", "icon.png"],
     }),
   ],
 
