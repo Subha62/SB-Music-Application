@@ -87,8 +87,6 @@
   color: white;
   width: 25px;
   height: 25px;
-  will-change: transform;
-  animation: rotate 2s linear infinite;
 }
 
 @media (max-width: 769px) {
