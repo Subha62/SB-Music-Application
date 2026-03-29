@@ -1,21 +1,140 @@
+// import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
+// const selectRandomKey = () => {
+//   const apiKey = import.meta.env.VITE_YT_API;
+//   if (apiKey.includes(",")) {
+//     const apiKeys = apiKey.split(",").map(k => k.trim());
+//     const random = Math.floor(Math.random() * apiKeys.length);
+//     return apiKeys[random];
+//   } else {
+//     return apiKey;
+//   }
+// };
+
+// const baseUrl = "https://www.googleapis.com/youtube/v3";
+
+// export const songsApi = createApi({
+//   reducerPath: "songsApi",
+//   baseQuery: fetchBaseQuery({ baseUrl }),
+
+//   endpoints: (builder) => ({
+//     getSongsById: builder.query({
+//       query: (songId) => ({
+//         url: "videos",
+//         params: {
+//           part: "snippet,contentDetails",
+//           id: songId,
+//           key: selectRandomKey(),
+//         },
+//       }),
+//     }),
+
+//     getPlaylist: builder.query({
+//       query: (playlistId) => ({
+//         url: "playlists",
+//         params: {
+//           part: "snippet",
+//           id: playlistId,
+//           maxResults: 1,
+//           key: selectRandomKey(),
+//         },
+//       }),
+//     }),
+
+//     getPlaylistItems: builder.query({
+//       query: (playlistId) => ({
+//         url: "playlistItems",
+//         params: {
+//           part: "snippet",
+//           playlistId: playlistId,
+//           maxResults: 10,
+//           key: selectRandomKey(),
+//         },
+//       }),
+//     }),
+
+//     getAllPlaylistItems: builder.query({
+//       query: (playlistId) => ({
+//         url: "playlistItems",
+//         params: {
+//           part: "snippet",
+//           playlistId: playlistId,
+//           maxResults: 50,
+//           key: selectRandomKey(),
+//         },
+//       }),
+//     }),
+
+//     getSearchItems: builder.query({
+//       query: (searchQuery) => ({
+//         url: "search",
+//         params: {
+//           part: "snippet",
+//           q: searchQuery,
+//           type: "video",
+//           maxResults: 50,
+//           key: selectRandomKey(),
+//         },
+//       }),
+//     }),
+
+//     getSearchRelatedItems: builder.query({
+//       query: (videoId) => ({
+//         url: "search",
+//         params: {
+//           part: "snippet",
+//           relatedToVideoId: videoId,
+//           type: "video",
+//           videoCategoryId: "10",
+//           maxResults: 10,
+//           key: selectRandomKey(),
+//         },
+//       }),
+//     }),
+//   }),
+// });
+
+// export const {
+//   useGetPlaylistItemsQuery,
+//   useGetSongsByIdQuery,
+//   useGetSearchItemsQuery,
+//   useGetSearchRelatedItemsQuery,
+//   useGetAllPlaylistItemsQuery,
+//   useGetPlaylistQuery,
+// } = songsApi;
+
+
+
+
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const selectRandomKey = () => {
   const apiKey = import.meta.env.VITE_YT_API;
+
+  if (!apiKey) return "";
+
   if (apiKey.includes(",")) {
-    const apiKeys = apiKey.split(",").map(k => k.trim());
+    const apiKeys = apiKey.split(",").map((k) => k.trim());
     const random = Math.floor(Math.random() * apiKeys.length);
     return apiKeys[random];
-  } else {
-    return apiKey;
   }
+
+  return apiKey;
 };
 
 const baseUrl = "https://www.googleapis.com/youtube/v3";
 
 export const songsApi = createApi({
   reducerPath: "songsApi",
-  baseQuery: fetchBaseQuery({ baseUrl }),
+
+  baseQuery: fetchBaseQuery({
+    baseUrl,
+  }),
+
+  // Prevent repeated refetches and UI shaking
+  refetchOnFocus: false,
+  refetchOnReconnect: false,
+  refetchOnMountOrArgChange: false,
 
   endpoints: (builder) => ({
     getSongsById: builder.query({
@@ -27,6 +146,12 @@ export const songsApi = createApi({
           key: selectRandomKey(),
         },
       }),
+
+      transformResponse: (response) => ({
+        items: Array.isArray(response?.items) ? response.items : [],
+      }),
+
+      keepUnusedDataFor: 300,
     }),
 
     getPlaylist: builder.query({
@@ -39,6 +164,12 @@ export const songsApi = createApi({
           key: selectRandomKey(),
         },
       }),
+
+      transformResponse: (response) => ({
+        items: Array.isArray(response?.items) ? response.items : [],
+      }),
+
+      keepUnusedDataFor: 300,
     }),
 
     getPlaylistItems: builder.query({
@@ -46,11 +177,18 @@ export const songsApi = createApi({
         url: "playlistItems",
         params: {
           part: "snippet",
-          playlistId: playlistId,
+          playlistId,
           maxResults: 10,
           key: selectRandomKey(),
         },
       }),
+
+      transformResponse: (response) => ({
+        items: Array.isArray(response?.items) ? response.items : [],
+        pageInfo: response?.pageInfo || {},
+      }),
+
+      keepUnusedDataFor: 300,
     }),
 
     getAllPlaylistItems: builder.query({
@@ -58,11 +196,18 @@ export const songsApi = createApi({
         url: "playlistItems",
         params: {
           part: "snippet",
-          playlistId: playlistId,
+          playlistId,
           maxResults: 50,
           key: selectRandomKey(),
         },
       }),
+
+      transformResponse: (response) => ({
+        items: Array.isArray(response?.items) ? response.items : [],
+        pageInfo: response?.pageInfo || {},
+      }),
+
+      keepUnusedDataFor: 300,
     }),
 
     getSearchItems: builder.query({
@@ -76,6 +221,13 @@ export const songsApi = createApi({
           key: selectRandomKey(),
         },
       }),
+
+      transformResponse: (response) => ({
+        items: Array.isArray(response?.items) ? response.items : [],
+        pageInfo: response?.pageInfo || {},
+      }),
+
+      keepUnusedDataFor: 300,
     }),
 
     getSearchRelatedItems: builder.query({
@@ -90,6 +242,13 @@ export const songsApi = createApi({
           key: selectRandomKey(),
         },
       }),
+
+      transformResponse: (response) => ({
+        items: Array.isArray(response?.items) ? response.items : [],
+        pageInfo: response?.pageInfo || {},
+      }),
+
+      keepUnusedDataFor: 300,
     }),
   }),
 });
