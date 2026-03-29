@@ -55,6 +55,59 @@
 // export default SongsCard;
 
 
+// import React from "react";
+// import { useDispatch } from "react-redux";
+// import { addSongInfo } from "../../reduxtool/slice/currentSongSlice";
+// import "./SongsCard.css";
+
+// const SongsCard = ({ songs }) => {
+//   const dispatch = useDispatch();
+
+//   const handleRedirect = (videoId) => {
+//     // When user clicks: store selected song ID & ensure miniPlayer will open
+//     dispatch(addSongInfo({ id: videoId, miniPlayerActive: false }));
+//   };
+
+//   const videoId = songs?.snippet?.resourceId?.videoId || songs?.id?.videoId;
+
+//   return (
+//     <div
+//       className="songs-card-container cur-pointer"
+//       onClick={() => handleRedirect(videoId)}
+//       title={songs?.snippet?.title?.slice(0, 30) + "..."}
+//     >
+//       <div className="songs-card-wrapper">
+//         <div className="songs-image-wrapper">
+//           <img
+//             src={
+//               songs?.snippet?.thumbnails?.maxres
+//                 ? songs.snippet.thumbnails.maxres.url
+//                 : songs?.snippet?.thumbnails?.high?.url
+//             }
+//             className="songs-image"
+//             alt={`${songs?.snippet?.title} (audio mp3)` || "song-poster"}
+//           />
+//           {songs?.snippet?.liveBroadcastContent === "live" && (
+//             <small className="live-content">Live</small>
+//           )}
+//         </div>
+
+//         <div className="songs-title-channel-wrapper">
+//           <p className="songs-title">
+//             {songs?.snippet?.title || "Unknown Title"}
+//           </p>
+//           <p className="songs-channel">
+//             {songs?.snippet?.channelTitle === "YouTube"
+//               ? "SB Music"
+//               : songs?.snippet?.channelTitle || "Unknown Channel"}
+//           </p>
+//         </div>
+//       </div>
+//     </div>
+
+
+
+
 import React from "react";
 import { useDispatch } from "react-redux";
 import { addSongInfo } from "../../reduxtool/slice/currentSongSlice";
@@ -63,48 +116,65 @@ import "./SongsCard.css";
 const SongsCard = ({ songs }) => {
   const dispatch = useDispatch();
 
-  const handleRedirect = (videoId) => {
-    // When user clicks: store selected song ID & ensure miniPlayer will open
-    dispatch(addSongInfo({ id: videoId, miniPlayerActive: false }));
-  };
+  const videoId =
+    songs?.snippet?.resourceId?.videoId ||
+    songs?.id?.videoId ||
+    songs?.id ||
+    "";
 
-  const videoId = songs?.snippet?.resourceId?.videoId || songs?.id?.videoId;
+  const thumbnail =
+    songs?.snippet?.thumbnails?.maxres?.url ||
+    songs?.snippet?.thumbnails?.high?.url ||
+    songs?.snippet?.thumbnails?.medium?.url ||
+    songs?.snippet?.thumbnails?.default?.url ||
+    "";
+
+  const title = songs?.snippet?.title || "Unknown Title";
+
+  const channel =
+    songs?.snippet?.channelTitle === "YouTube"
+      ? "SB Music"
+      : songs?.snippet?.channelTitle || "Unknown Channel";
+
+  const handleRedirect = () => {
+    if (!videoId) return;
+
+    dispatch(
+      addSongInfo({
+        id: videoId,
+        miniPlayerActive: false,
+      })
+    );
+  };
 
   return (
     <div
       className="songs-card-container cur-pointer"
-      onClick={() => handleRedirect(videoId)}
-      title={songs?.snippet?.title?.slice(0, 30) + "..."}
+      onClick={handleRedirect}
+      title={title}
     >
       <div className="songs-card-wrapper">
         <div className="songs-image-wrapper">
           <img
-            src={
-              songs?.snippet?.thumbnails?.maxres
-                ? songs.snippet.thumbnails.maxres.url
-                : songs?.snippet?.thumbnails?.high?.url
-            }
+            src={thumbnail}
             className="songs-image"
-            alt={`${songs?.snippet?.title} (audio mp3)` || "song-poster"}
+            alt={`${title} poster`}
+            loading="lazy"
           />
+
           {songs?.snippet?.liveBroadcastContent === "live" && (
             <small className="live-content">Live</small>
           )}
         </div>
 
         <div className="songs-title-channel-wrapper">
-          <p className="songs-title">
-            {songs?.snippet?.title || "Unknown Title"}
-          </p>
-          <p className="songs-channel">
-            {songs?.snippet?.channelTitle === "YouTube"
-              ? "SB Music"
-              : songs?.snippet?.channelTitle || "Unknown Channel"}
-          </p>
+          <p className="songs-title">{title}</p>
+          <p className="songs-channel">{channel}</p>
         </div>
       </div>
     </div>
   );
 };
 
-export default SongsCard;
+export default React.memo(SongsCard);
+
