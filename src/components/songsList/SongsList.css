@@ -28,6 +28,54 @@
 }  */
 
 
+/* .songs-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.songs-list-top-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.songs-list-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.view-all {
+  font-size: 0.9rem;
+  color: #00f; /* adjust to theme 
+  text-decoration: none;
+}
+
+.view-all:hover {
+  text-decoration: underline;
+}
+
+.songs-list-wrapper {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+}
+
+.search-not-found-wrapper {
+  text-align: center;
+  color: #fff;
+  margin-top: 40px;
+}
+
+.search-query-text {
+  font-style: italic;
+} */
+
+
+
+
+
 .songs-list-container {
   display: flex;
   flex-direction: column;
@@ -48,18 +96,38 @@
 
 .view-all {
   font-size: 0.9rem;
-  color: #00f; /* adjust to theme */
+  color: #00f;
   text-decoration: none;
+  transition: opacity 0.2s ease;
 }
 
 .view-all:hover {
   text-decoration: underline;
+  opacity: 0.8;
 }
 
 .songs-list-wrapper {
   display: flex;
   overflow-x: auto;
+  overflow-y: hidden;
   gap: 20px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  will-change: transform;
+  padding-bottom: 4px;
+}
+
+.songs-list-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.songs-list-wrapper::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 10px;
+}
+
+.songs-list-wrapper::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .search-not-found-wrapper {
